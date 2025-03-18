@@ -67,3 +67,14 @@
 
 </body>
 </html>
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        let location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        map.setCenter(location);
+        request.location = location;
+        service.nearbySearch(request, callback);
+    });
+}
