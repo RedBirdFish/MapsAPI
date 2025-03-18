@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Finder</title>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Find Restaurants Near You</h2>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            // Set the initial location
+            let location = { lat: 40.7128, lng: -74.0060 }; // Default to New York
+
+            // Create the map
+            let map = new google.maps.Map(document.getElementById("map"), {
+                center: location,
+                zoom: 14
+            });
+
+            // Create a Places service instance
+            let service = new google.maps.places.PlacesService(map);
+
+            // Define search request
+            let request = {
+                location: location,
+                radius: 1500, // Search within 1.5 km
+                type: ['restaurant'] // Search for restaurants
+            };
+
+            // Perform a nearby search
+            service.nearbySearch(request, function (results, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    for (let i = 0; i < results.length; i++) {
+                        createMarker(results[i], map);
+                    }
+                }
+            });
+        }
+
+        function createMarker(place, map) {
+            let marker = new google.maps.Marker({
+                position: place.geometry.location,
+                map: map
+            });
+
+            // Info window
+            let infoWindow = new google.maps.InfoWindow({
+                content: `<h4>${place.name}</h4><p>Rating: ${place.rating || 'N/A'}</p>`
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+        }
+    </script>
+
+</body>
+</html>
